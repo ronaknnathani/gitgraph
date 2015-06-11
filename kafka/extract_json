@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+from kafka import SimpleProducer, KafkaClient
+import json
+from pprint import pprint
+
+def sentences(file_name):
+    with open(file_name) as f:
+        for i,line in enumerate(f):
+           # data = json.loads(line)
+#	    if i==5:
+#               break
+            producer.send_messages("first-json-topic", line)
+ 
+ip_file = "../data/2015-01-01-0.json"
+
+kafka = KafkaClient("localhost:9092")
+producer = SimpleProducer(kafka)
+
+sentences(ip_file)
+
+
+
