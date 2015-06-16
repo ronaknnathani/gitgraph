@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+
+import json, re
+from bson import json_util
+
+with open("../data/ghtorrent/followers-2015-01-29", "rb") as f:
+  bsondata = f.read()
+  jsondata = re.sub(r'ObjectId\s*\(\s*\"(\S+)\"\s*\)',r'{"$oid": "\1"}',bsondata)
+  jsondata = re.sub(r'Date\s*\(\s*(\S+)\s*\)',r'{"$date": \1}',jsondata)
+  data = json.loads(jsondata, object_hook=json_util.object_hook)
+  print(data)
+  print(type(data))
+  print(json_util.dumps(data))
+  print "\n"
