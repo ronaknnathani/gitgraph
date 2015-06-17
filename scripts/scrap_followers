@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+from bs4 import BeautifulSoup
+import pickle
+import urllib
+import mechanize
+import json
+import os
+
+br = mechanize.Browser()
+br.set_handle_robots(False)
+
+followers_url = "https://github.com/"
+f = open("following-1000000.json","wb")
+
+files = os.listdir("../../data/users_data")
+filenums = [x[5:] for x in files]
+filenumsints = [int(x) for x in filenums]
+filenumsdesired = [x for x in filenumsints if x < 100]
+filesdesired = ["users"+str(x) for x in filenumsdesired]
+
+output = []
+
+def get_followers(url_tail, user, followers, page):
+  #print len(followers)
+  response = urllib.urlopen(followers_url + user + "/following" + url_tail)
+  soup = BeautifulSoup(response)
+  followers_html = soup.find_all("h3", class_="follow-list-name")
+  if followers_html == []:
+    return followers
+  else:
+    for follower in followers_html:
+      followers.append(str(follower.a["href"]))
+    page +=1
+    get_followers("?page="+str(page), user, followers, page)
+    return followers
+
+count = 0
+
+for filename in filesdesired:
+  ip = open("../../data/users_data/"+filename, "rb")
+  json_records = json.load(ip)
+  usernames = [(x['login'], x['id']) for x in json_records]
+  for users in usernames:
+    user = users[0]
+    user_id = users[1]
+    followers = []
+    followers_dict = {}
+    print "\ncount: ", count, " for user: ", user
+    followers = get_followers("", user, [], 1)
+    print "total people followed: ", len(followers)
+    followers_dict["login"] = user
+    followers_dict["id"] = user_id
+    followers_dict["following"] = followers
+    output.append(followers_dict)
+    count += 1
+
+json.dump(output, f)
+f.close()
