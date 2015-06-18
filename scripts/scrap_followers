@@ -11,12 +11,12 @@ br = mechanize.Browser()
 br.set_handle_robots(False)
 
 followers_url = "https://github.com/"
-f = open("following-1000000.json","wb")
+f = open("following-1500000.json","wb")
 
 files = os.listdir("../../data/users_data")
 filenums = [x[5:] for x in files]
 filenumsints = [int(x) for x in filenums]
-filenumsdesired = [x for x in filenumsints if x < 100]
+filenumsdesired = [x for x in filenumsints if x < 1500000]
 filesdesired = ["users"+str(x) for x in filenumsdesired]
 
 output = []
