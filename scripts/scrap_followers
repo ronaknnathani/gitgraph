@@ -30,7 +30,7 @@ def get_followers(url_tail, user, followers, page):
     return followers
   else:
     for follower in followers_html:
-      followers.append(str(follower.a["href"]))
+      followers.append((follower.a["href"][1:],follower.a.get_text()))
     page +=1
     get_followers("?page="+str(page), user, followers, page)
     return followers
