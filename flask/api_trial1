@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+ELECT * FROM watch
 
 from cassandra.cluster import Cluster
 from flask import Flask
+import json
 
 cluster = Cluster(['52.8.127.252'])
 session = cluster.connect('watch_events')
@@ -13,7 +14,19 @@ def cass_api(repo):
   cql = "SELECT * FROM watch WHERE reponame = %s"
   #bound_stmt = prepared_stmt.bind(str(repo))
   stmt = session.execute(cql,parameters=[repo] )
-  return str(stmt)
+  return json.dumps(stmt)
+
+@app.route("/cassall")
+def cass_all():
+  print "ronak"
+  cql = "SELECT * FROM watch"
+  print "\n\nronak\n\n"
+  #bound_stmt = prepared_stmt.bind(str(repo))
+  stmt = session.execute(cql)
+  responselist = json.dumps(stmt)
+  jsonresponse = [{"reponame":x[0], "watchcount":x[1]} for x in responselist]
+  return render_template("index.html", repos = jsonresponse)
+
 
 @app.route("/")
 @app.route("/index")
