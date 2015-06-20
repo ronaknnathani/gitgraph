@@ -6,20 +6,25 @@ import urllib
 import mechanize
 import json
 import os
+from kafka import SimpleProducer, KafkaClient
+import json
+
+kafka = KafkaClient("ec2-52-8-111-39.us-west-1.compute.amazonaws.com:9092")
+producer = SimpleProducer(kafka)
 
 br = mechanize.Browser()
 br.set_handle_robots(False)
 
 followers_url = "https://github.com/"
-f = open("following-1500000.json","wb")
+f = open("following-1500001to2000000.json","wb")
 
 files = os.listdir("../../data/users_data")
 filenums = [x[5:] for x in files]
 filenumsints = [int(x) for x in filenums]
-filenumsdesired = [x for x in filenumsints if x < 1500000]
+filenumsdesired = [x for x in filenumsints if (x >= 1500000 and x <= 2000000)]
 filesdesired = ["users"+str(x) for x in filenumsdesired]
 
-output = []
+#output = []
 
 def get_followers(url_tail, user, followers, page):
   #print len(followers)
@@ -35,13 +40,14 @@ def get_followers(url_tail, user, followers, page):
     get_followers("?page="+str(page), user, followers, page)
     return followers
 
-count = 0
+count = 1
 
 for filename in filesdesired:
   ip = open("../../data/users_data/"+filename, "rb")
   json_records = json.load(ip)
   usernames = [(x['login'], x['id']) for x in json_records]
   for users in usernames:
+    #op = open("../../data/follwing_data/following"+str(count),"wb")
     user = users[0]
     user_id = users[1]
     followers = []
@@ -52,8 +58,10 @@ for filename in filesdesired:
     followers_dict["login"] = user
     followers_dict["id"] = user_id
     followers_dict["following"] = followers
-    output.append(followers_dict)
+    producer.send_messages("scrap-following-1", json.dumps(followers_dict))
+    f.write(json.dumps(followers_dict)+"\n")
+   # output.append(followers_dict)
     count += 1
 
-json.dump(output, f)
+#json.dump(output, f)
 f.close()

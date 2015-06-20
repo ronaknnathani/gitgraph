@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+import json
+import os 
+import pickle
+
+op_file = open("final_usernames_12000000plus_pickle","wb")
+
+files = os.listdir("../../data/users_data")
+filenums = [x[5:] for x in files if x[0]!='.']
+filenumsints = [int(x) for x in filenums]
+filenumsdesired = [x for x in filenumsints if (x > 12000000)]
+filesdesired = ["users"+str(x) for x in filenumsdesired]
+
+final_usernames = []
+#count = 1
+for i, filename in enumerate(filesdesired):
+  ip = open("../../data/users_data/"+filename, "rb")
+  json_records = json.load(ip)
+  usernames = [(x['login'], x['id']) for x in json_records]
+  final_usernames += usernames
+  print i
+
+pickle.dump(final_usernames, op_file)
+op_file.close()
