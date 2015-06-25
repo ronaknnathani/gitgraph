@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+from cassandra.cluster import Cluster
+#from flask import Flask
+import json
+from cassandra.query import SimpleStatement
+
+cluster = Cluster(['52.8.127.252'])
+session = cluster.connect('watch_events')
+
+
+#app = Flask(__name__)
+
+#@app.route("/cass/<repo>")
+def cass_api(repo):
+  cql = "SELECT * FROM watch WHERE reponame = %s"
+  #bound_stmt = prepared_stmt.bind(str(repo))
+  stmt = session.execute(cql,parameters=[repo])
+  print stmt[0].reponame
+  print json.dumps(stmt)
+  return json.dumps(stmt)
+
+cass_api("fuel")
+print "\n"
+
+repo = "fuel"
+w = "250"
+#@app.route("/cassall")
+cql = "SELECT * FROM watch"
+stmt = session.execute(cql)
+#responselist = json.dumps(stmt)
+response = []
+print type(stmt)
+for all in stmt:
+  response.append(all)
+dictionary = [{"reponame":x.reponame, "watchcount":x.watchcount} for x in response[1:30]]
+print response[1:10]
+print "\n", dictionary
+#print "\n\nronak\n\n"
+#jsonresponse = [{"reponame":x[0], "watchcount":x[1]} for x in responselist]
+#return render_template("index.html", repos = jsonresponse)
+
+
+

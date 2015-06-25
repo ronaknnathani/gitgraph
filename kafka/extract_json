@@ -12,7 +12,7 @@ def sentences(file_name):
 #               break
             producer.send_messages("first-json-topic", line)
  
-ip_file = "../data/2015-01-01-0.json"
+ip_file = "../data/gitarchive/2015-01-01-0.json"
 
 kafka = KafkaClient("localhost:9092")
 producer = SimpleProducer(kafka)

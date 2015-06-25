@@ -1,14 +1,47 @@
-ELECT * FROM watch
+#!/usr/bin/env python
 
 from cassandra.cluster import Cluster
 from flask import Flask
+from flask import render_template
 import json
+from cassandra.query import SimpleStatement
+from flask import request
+#from app import app
 
 cluster = Cluster(['52.8.127.252'])
 session = cluster.connect('watch_events')
 
 app = Flask(__name__)
 
+@app.route("/")
+@app.route("/index")
+def hello():
+  return render_template("index.html")
+
+@app.route("/userid")
+def userid():
+  return render_template("userid.html")
+
+@app.route("/watchcount")
+def watchcount():
+  return render_template("watchcount.html")
+
+@app.route("/watchcount", methods=['POST'])
+def watchcount_post():
+  reponame = request.form["reponame"]
+  cql = "SELECT watchcount FROM watch WHERE reponame=%s"
+  stmt = session.execute(cql, parameters=[reponame])
+  jsonresponse = {"watchcount": stmt[0].watchcount}
+  return render_template("wcresult.html", wc = jsonresponse)
+
+@app.route("/userid", methods=['POST'])
+def userid_post():
+  user_id = request.form["userid"]
+  cql = "SELECT userid FROM getuserid WHERE username=%s"
+  stmt = session.execute(cql, parameters=[user_id])
+  jsonresponse = {"userid": stmt[0].userid}
+  return render_template("useridresult.html", user_id = jsonresponse)
+  
 @app.route("/cass/<repo>")
 def cass_api(repo):
   cql = "SELECT * FROM watch WHERE reponame = %s"
@@ -16,22 +49,25 @@ def cass_api(repo):
   stmt = session.execute(cql,parameters=[repo] )
   return json.dumps(stmt)
 
-@app.route("/cassall")
+@app.route("/allrepo")
 def cass_all():
-  print "ronak"
   cql = "SELECT * FROM watch"
-  print "\n\nronak\n\n"
-  #bound_stmt = prepared_stmt.bind(str(repo))
   stmt = session.execute(cql)
-  responselist = json.dumps(stmt)
-  jsonresponse = [{"reponame":x[0], "watchcount":x[1]} for x in responselist]
-  return render_template("index.html", repos = jsonresponse)
+  response = []
+  for all in stmt:
+    response.append(all)
+  jsonresponse = [{"reponame":x.reponame, "watchcount":x.watchcount} for x in response[1:30]]
+  return render_template("allrepo.html", repos = jsonresponse)
 
-
-@app.route("/")
-@app.route("/index")
-def hello():
-  return "Hello World!"
+@app.route("/top10repo")
+def top10repo():
+  cql = "SELECT * FROM watch"
+  stmt = session.execute(cql)
+  response = []
+  for all in stmt:
+    response.append(all)
+  jsonresponse = [{"reponame":x.reponame, "watchcount":x.watchcount} for x in response[1:10]]
+  return render_template("top10repo.html", toprepos = jsonresponse)
 
 @app.route("/holla")
 def holla():

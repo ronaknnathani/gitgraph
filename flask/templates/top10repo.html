@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block top10repo %}
+<div class="row text-center">
+        <div class="col-md-4 col-md-offset-4 text-center" style="margin-top:10vh;">
+                <h3>Top 10 trending repos are</h3>            
+                <!-- <h1>Repos with watchcounts</h1> -->
+                <br /><br />
+                <table class="table text-center">    
+                        <thead>
+                                <tr>
+                                        <th>reponame</th>
+                                        <th>watchcount</th>
+                                        </tr>
+                        </thead>
+                        <tbody>
+                                {% for repo in toprepos %}
+                                <tr>
+                                        <td>{{repo.reponame}}</td>
+                                        <td>{{repo.watchcount}}</td>
+                                </tr>
+                                {% endfor %}
+                        </tbody>
+                </table>
+        </div>
+</div>
+{% endblock %}

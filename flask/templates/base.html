@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="en">
+        <head>
+
+                <meta charset="utf-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <meta name="author" content="Ronak Nathani">
+                <title>GitHubGraph</title>
+                <!--Bootstrap CSS -->
+                <link href="../static/bootstrap.min.css" rel="stylesheet" type="text/css">
+                <!--Custom CSS -->
+                <link href="../static/site.css" rel="stylesheet" type="text/css"> 
+                <!--Animate CSS -->
+                <!-- <link href="css/animate.css" rel="stylesheet"> -->
+                <!-- Font Awesome-->
+                    
+                <!--<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">-->
+                <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+                <!-- Fonts -->
+                <link href='http://fonts.googleapis.com/css?family=Qwigley' rel='stylesheet' type='text/css'>
+                <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+                <link rel="shortcut icon" href="../static/favicon.ico" type="image/x-icon" />
+                   
+                <!-- link rel="shortcut icon" href="images/gaussian.ico" type="image/x-icon" /> -->
+                <!-- <link rel="shortcut icon" href="Rosetta_Stone.ico" type="image/x-icon" /> -->
+                <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+                <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+                <!--[if lt IE 9]>
+                <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+                <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+                <![endif]-->
+                                    
+        </head>
+        <body id="page-top">
+                <nav class="navbar navbar-default navbar-fixed-top" style="background:#054760; border-color:#054760">
+                        <div style="padding:0 80px;">
+                                                        <!-- Brand and toggle get grouped for better mobile display -->
+                                <div class="navbar-header page-scroll" style="">
+                                        <button style="display:none;" type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                                <span class="sr-only">Toggle navigation</span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                        </button>
+                                        <a class="navbar-brand page-scroll" style="color: #fff; font-size:24px;" href="http://52.8.127.252:5000/">
+                                                <i class="fa fa-github"></i> Graph
+                                        </a>
+                                                                
+                                        <span class="visible-xs"><br /><br /></span>
+                                </div>
+                                                        <!-- Collect the nav links, forms, and other content for toggling -->
+                                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">                                
+                                        <ul class="nav navbar-nav navbar-right">
+                                                <li class="hidden">
+                                                        <a href="#page-top"></a>
+                                                </li>
+                                                <li>
+                                                        <a class="page-scroll" style="color:#fff;" href="/watchcount">Watch Count</a>
+                                                </li>
+                                                <li>
+                                                        <a class="page-scroll" style="color:#fff;" href="/userid">User ID</a>
+                                                </li>
+                                                <li>
+                                                        <a class="page-scroll" style="color:#fff;" href="http://ronaknnathani.github.io/">About Me</a>
+                                                </li>
+                                        </ul>
+                                </div>
+                                                        
+                        </div>
+                                                
+                </nav>
+
+                {% block index %}{% endblock %}
+                {% block userid %}{% endblock %}
+                {% block watchcount %}{% endblock %}
+                {% block wcresult %}{% endblock %}
+                {% block useridresult %}{% endblock %}
+                {% block allrepo %}{% endblock %}
+                {% block top10repo %}{% endblock %}
+
+        </body>
+</html>
+

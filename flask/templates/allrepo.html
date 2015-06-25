@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block allrepo %}
+      <h1>Repos with watchcounts</h1>
+      <table class="table">    
+        <thead>
+          <tr>
+     	  <th>reponame</th>
+    	  <th>watchcount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for repo in repos %}
+  	<tr>
+            <td>{{repo.reponame}}</td>
+  	  <td>{{repo.watchcount}}</td>
+  	</tr>
+	{% endfor %}
+{% endblock %}
