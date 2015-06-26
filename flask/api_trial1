@@ -1,17 +1,37 @@
 #!/usr/bin/env python
 
 from cassandra.cluster import Cluster
-from flask import Flask
-from flask import render_template
+from flask import Flask, jsonify, render_template, request
+from flask_restful import Resource, Api
 import json
 from cassandra.query import SimpleStatement
-from flask import request
-#from app import app
 
 cluster = Cluster(['52.8.127.252'])
 session = cluster.connect('watch_events')
 
 app = Flask(__name__)
+# api = Api(app)
+
+# class testgraphapi(Resource):
+#   def post(self):
+#     def testgraph_post():
+#   username = request.form["username"]
+#   cql = "SELECT f from testuserfollow WHERE username=%s"
+#   stmt = session.execute(cql, parameters=[username])
+#   following_list = stmt[0].f
+#   print following_list
+#   repojson = []
+#   for all in following_list:
+#     cql = "SELECT repo from testuserrepo WHERE username=%s"
+#     reporow = session.execute(cql, parameters=[all])
+#     repojson.append({"username": all, "repo": reporow[0].repo})
+#   # print repojson, type(repojson)
+#   # print "\n", repojson[0]["repo"]
+#   jsonresponse = {"username": username, "following_details": repojson}
+#   # json_results = map(lambda a: {k: json.loads(a.record).get(k, None)}, repojson)
+#   return render_template("testgraphresult.html", response = jsonresponse)
+
+# api.add_resource(testgraphapi, '/api/testgraphtree')
 
 @app.route("/")
 @app.route("/index")
@@ -42,6 +62,29 @@ def userid_post():
   jsonresponse = {"userid": stmt[0].userid}
   return render_template("useridresult.html", user_id = jsonresponse)
   
+@app.route("/testd3")
+def testd3():
+  return render_template("testd3.html")
+
+@app.route("/testgraph")
+def testgraph():
+  return render_template("testgraph.html")
+
+@app.route("/testgraph", methods=['POST'])
+def testgraph_post():
+  username = request.form["username"]
+  cql = "SELECT f from testuserfollow WHERE username=%s"
+  stmt = session.execute(cql, parameters=[username])
+  following_list = stmt[0].f
+  print following_list
+  repojson = []
+  for all in following_list:
+    cql = "SELECT repo from testuserrepo WHERE username=%s"
+    reporow = session.execute(cql, parameters=[all])
+    repojson.append({"username": all, "repo": reporow[0].repo})
+  jsonresponse = {"username": username, "following_details": repojson}
+  return render_template("testgraphresult.html", response = jsonresponse)
+
 @app.route("/cass/<repo>")
 def cass_api(repo):
   cql = "SELECT * FROM watch WHERE reponame = %s"

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block testgraph %}
+        <div class="row">
+                <div class="col-md-4 col-md-offset-4" style="margin-top:30vh;">
+                        <form action="/testgraph" method="POST">
+                                <div class="form-group text-center">
+                                        <label style="font-weight:300; font-size:36px;">Enter GitHub username</label>
+                                        <br /><br />
+                                        <input type="text" class="form-control" name="username" placeholder="username">
+                                        <br />
+                                        <button type="submit" value="Send" name="userid-container" class="btn btn-default id-submit">Submit</button>
+                                </div>
+                        </form>
+                </div>
+        </div>
+{% endblock %}

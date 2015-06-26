@@ -19,6 +19,10 @@ a {
     transition: all .2s ease-in-out;
 }
 
+.no-border-top{
+    border-top: 0px;
+}
+
 th {
     text-align: center;
 }

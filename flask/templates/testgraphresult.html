@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block testgraphresult %}
+<div class="row text-center">
+        <div class="col-md-10    col-md-offset-1 text-center" style="margin-top:10vh;">
+                <!-- <h3>Repos for people followed by </h3>             -->
+                <br /><br />
+                <table class="table text-center">    
+                        <thead>
+                                <tr>
+                                        <th>Username</th>
+                                        <th>Following</th>
+                                        <th>Repos</th>
+                                </tr>
+                        </thead>
+                        <tbody>                                
+                                <tr>
+                                        <th>{{response.username}}</th>
+                                        <td>
+                                                <table class="table text-center">
+                                                        <tbody>
+                                                                {% for repos in response.following_details %}
+                                                                <tr>
+                                                                        <td style="border-top:0px;">{{repos.username}}</td>
+                                                                       <!--  <td>{{repos.repo.keys()}}</td> -->
+                                                                </tr>
+                                                                {% endfor %}
+                                                        </tbody>
+                                                </table>
+                                        </td>
+                                        <td style="border-top:0px">
+                                                <table class="table text-center">
+                                                        <tbody>
+                                                                {% for repos in response.following_details %}
+                                                                <tr>
+                                                                        <!-- <td>{{repos.username}}</td> -->
+                                                                        <td style="border-top:0px;">{% for repository in repos.repo.keys()%}
+                                                                                {{repository}},
+                                                                                {% endfor %}
+                                                                        </td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                        </tbody>
+                                                </table>
+                                        </td>
+                                </tr>
+                        </tbody>
+                </table>
+        </div>
+</div>
+{% endblock %}
