@@ -1,0 +1,28 @@
+{
+    "name": "digitalcraft", 
+    "children": [{
+        "name": "michaelrhodes", 
+        "children": [
+                {"name": "boo1ean/irm", "size":1000}, 
+                {"name":"hughsk/from2", "size":1000}, 
+                {"name":"jshint/fixmyjs", "size":1000}], 
+           },{     
+            "name": "rvagg", 
+            "children": [
+            {"name":"iojs/build", "size":1000}, 
+            {"name":"iojs/build-containers", "size":1000}, 
+            {"name":"iojs/iojs.github.io", "size":1000}
+            ]}, 
+            {"name": "mafintosh", 
+            "children": [
+            {"name":"mafintosh/difffs", "size":1000}, 
+            {"name":"mafintosh/templates", "size":1000}
+            ]}, 
+            {"name": "tridge", 
+            "children": [
+            {"name":"diydrones/ardupilot", "size":1000}, 
+            {"name":"tridge/ardupilot", "size":1000}, 
+            {"name":"tridge/cuav", "size":1000}
+            ]
+            }]
+}

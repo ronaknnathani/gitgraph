@@ -81,8 +81,8 @@ def testgraph_post():
   for all in following_list:
     cql = "SELECT repo from testuserrepo WHERE username=%s"
     reporow = session.execute(cql, parameters=[all])
-    repojson.append({"name": all, "children": list(reporow[0].repo)})
-  jsonresponse = {"name": username, "children": repojson}
+    repojson.append({"name": all, "children": [{"name":reponame, "size":10000} for reponame in list(reporow[0].repo)]})
+  jsonresponse = {"name": username, "children": [x for x in repojson]}
   # f = open("./static/testfile.json" ,"w")
   # f.write(json.dumps(jsonresponse))
   # f.close()

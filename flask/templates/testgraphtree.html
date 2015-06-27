@@ -1,105 +1,135 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300" rel="stylesheet" type="text/css">
-<style type="text/css">
 
-  .node {
-    cursor: pointer;
-  }
+<html lang="en">
+        <head>
 
-  .overlay{
-      background-color:#EEE;
-  }
-   
-/*  .node > .nodeCircle{
-    fill: #43aaa3;
-   }*/
+                <meta charset="utf-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <meta name="author" content="Ronak Nathani">
+                <title>GitHubGraph</title>
+                <!--Bootstrap CSS -->
+                <link href="../static/bootstrap.min.css" rel="stylesheet" type="text/css">
+                <!--Custom CSS -->
+                <link href="../static/site.css" rel="stylesheet" type="text/css"> 
+                <!--Animate CSS -->
+                <!-- <link href="css/animate.css" rel="stylesheet"> -->
+                <!-- Font Awesome-->
+                    
+                <!--<link href="font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">-->
+                <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+                <!-- Fonts -->
+                <link href='http://fonts.googleapis.com/css?family=Qwigley' rel='stylesheet' type='text/css'>
+                <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+                <link rel="shortcut icon" href="../static/favicon.ico" type="image/x-icon" />
+                   
+                <!-- link rel="shortcut icon" href="images/gaussian.ico" type="image/x-icon" /> -->
+                <!-- <link rel="shortcut icon" href="Rosetta_Stone.ico" type="image/x-icon" /> -->
+                <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+                <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+                <!--[if lt IE 9]>
+                <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+                <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+                <![endif]-->
+                <style type="text/css">
+  
+                        .node {
+                        cursor: pointer;
+                      }
 
-  .node circle {
-    fill: #43aaa3;
-    /*stroke: steelblue;*/
-    stroke: #43aaa3;
-    stroke-width: 1.5px;
-  }
-   
-  .node text {
-    font-size:12px; 
-    font-family:open sans, sans-serif;
-  }
-   
-  .link {
-    fill: none;
-    stroke: #ccc;
-    stroke-width: 1.5px;
-  }
+                      .overlay{
+                          background-color:#fff;
+                      }
+                       
+                      .node circle {
+                        fill: #fff;
+                        stroke: #43aaa3;
+                        stroke-width: 1.5px;
+                      }
+                       
+                      .node text {
+                        font-size:10px; 
+                        font-family: open sans, sans-serif;
+                      }
+                       
+                      .link {
+                        fill: none;
+                        stroke: #ccc;
+                        stroke-width: 1.5px;
+                      }
 
-  .templink {
-    fill: none;
-    stroke: red;
-    stroke-width: 3px;
-  }
+                      .templink {
+                        fill: none;
+                        stroke: red;
+                        stroke-width: 3px;
+                      }
 
-  .ghostCircle.show{
-      display:block;
-  }
+                      .ghostCircle.show{
+                          display:block;
+                      }
 
-  .ghostCircle, .activeDrag .ghostCircle{
-       display: none;
-  }
+                      .ghostCircle, .activeDrag .ghostCircle{
+                           display: none;
+                      }
 
-</style>
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+                    </style>
+                                    
+      </head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top" style="background:#43aaa3; border-color:#43aaa3">
+                        <div style="padding:0 80px;">
+                                                        <!-- Brand and toggle get grouped for better mobile display -->
+                                <div class="navbar-header page-scroll" style="">
+                                        <button style="display:none;" type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                                <span class="sr-only">Toggle navigation</span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                        </button>
+                                        <a class="navbar-brand page-scroll" style="color: #fff; font-size:24px;" href="http://52.8.127.252:5000/">
+                                                <i class="fa fa-github"></i> Graph
+                                        </a>
+                                                                
+                                        <span class="visible-xs"><br /><br /></span>
+                                </div>
+                                                        <!-- Collect the nav links, forms, and other content for toggling -->
+                                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">                                
+                                        <ul class="nav navbar-nav navbar-right">
+                                                <li class="hidden">
+                                                        <a href="#page-top"></a>
+                                                </li>
+                                                 <li>
+                                                        <a class="page-scroll" style="color:#fff;" href="/testgraph">Test Graph</a>
+                                                </li>
+                                                <li>
+                                                        <a class="page-scroll" style="color:#fff;" href="/watchcount">Watch Count</a>
+                                                </li>
+                                                <li>
+                                                        <a class="page-scroll" style="color:#fff;" href="/userid">User ID</a>
+                                                </li>
+                                                <li>
+                                                        <a class="page-scroll" style="color:#fff;" href="http://ronaknnathani.github.io/">About Me</a>
+                                                </li>
+                                        </ul>
+                                </div>
+                                                        
+                        </div>
+                                                
+                </nav>
+    <div id="tree-container"></div>
+</body>
+<script language="javascript">
+// var treeData = '{"name": "ronak","children": [ {"name": "sundar","children": [{"name": "stem cells","size": 10000}, {"name": "hadoop","size": 5000}]}, {"name": "abhilash", "children": [{"name": "haptics","size": 1000}, {"name": "spark","size": 1000}]}, {"name": "kushan","children": [{"name": "shopsense","size": 1000}, {"name": "data science","size": 1000}]}, {"name": "justin","children": [{"name": "common crawl","size": 1000}, {"name": "js", "size": 1000}]}]}';
+
+var treeData = {{response | safe}};
+treeData = JSON.parse(treeData);
+console.log(treeData);
+</script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<!-- <script src="dndTree-var.js"></script> -->
+<script type="text/javascript">
 // Get JSON data
-var myData = {
-    "name": "ronak",
-    "children": [ {
-        "name": "sundar",
-        "children": [{
-                "name": "stem cells",
-                "size": 10000
-            }, {
-                "name": "hadoop",
-                "size": 5000
-            }]
-        }, {
-            "name": "abhilash",
-            "children": [{
-                "name": "haptics",
-                "size": 1000
-            }, {
-                "name": "spark",
-                "size": 1000
-            }]
-        }, {
-            "name": "kushan",
-             "children": [{
-                "name": "shopsense",
-                "size": 1000
-            }, {
-                "name": "data science",
-                "size": 1000
-            }]
-        }, {
-            "name": "justin",
-            "children": [{
-                "name": "common crawl",
-                "size": 1000
-            }, {
-                "name": "js",
-                "size": 1000
-            }]
-        }]
-    };
-
-
-// var text = '{ "name" :  "mersal",' +
-// ' "children": [{"name": "ronak", "size":1000}] }';
-// alert(text);
-
-treeJSON = d3.json(myData | safe, function(error, treeData) {
-alert(treeData);
     // Calculate total nodes, max label length
     var totalNodes = 0;
     var maxLabelLength = 0;
@@ -618,9 +648,6 @@ alert(treeData);
     // Layout the tree initially and center on the root node.
     update(root);
     centerNode(root);
-});
+
 </script>
-<body>
-    <div id="tree-container"></div>
-</body>
 </html>
