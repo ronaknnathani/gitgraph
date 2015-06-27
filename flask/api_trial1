@@ -64,7 +64,7 @@ def userid_post():
   
 @app.route("/testd3")
 def testd3():
-  return render_template("testd3.html")
+  return render_template("testgraphtree.html")
 
 @app.route("/testgraph")
 def testgraph():
@@ -81,9 +81,12 @@ def testgraph_post():
   for all in following_list:
     cql = "SELECT repo from testuserrepo WHERE username=%s"
     reporow = session.execute(cql, parameters=[all])
-    repojson.append({"username": all, "repo": reporow[0].repo})
-  jsonresponse = {"username": username, "following_details": repojson}
-  return render_template("testgraphresult.html", response = jsonresponse)
+    repojson.append({"name": all, "children": list(reporow[0].repo)})
+  jsonresponse = {"name": username, "children": repojson}
+  # f = open("./static/testfile.json" ,"w")
+  # f.write(json.dumps(jsonresponse))
+  # f.close()
+  return render_template("testgraphtree.html", response = json.dumps(jsonresponse))
 
 @app.route("/cass/<repo>")
 def cass_api(repo):

@@ -94,8 +94,12 @@ var myData = {
     };
 
 
-treeJSON = d3.json("sample.json", function(error, treeData) {
+// var text = '{ "name" :  "mersal",' +
+// ' "children": [{"name": "ronak", "size":1000}] }';
+// alert(text);
 
+treeJSON = d3.json(myData | safe, function(error, treeData) {
+alert(treeData);
     // Calculate total nodes, max label length
     var totalNodes = 0;
     var maxLabelLength = 0;
