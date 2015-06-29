@@ -94,3 +94,24 @@ th {
             color: #ce3a3a;
             background-color: #fff;
         }
+
+footer {
+    padding: 50px 0;
+    text-align: center;
+}
+
+    footer span.copyright {
+        text-transform: uppercase;
+        text-transform: none;
+        font-family: 'Open Sans', sans-serif;
+        line-height: 40px;
+    }
+
+
+.footerme {
+    /*background: #424242;*/
+    background: #292f33;
+    color: #f7f7f7;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+}

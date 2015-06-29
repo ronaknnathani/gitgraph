@@ -5,6 +5,7 @@ from flask import Flask, jsonify, render_template, request
 from flask_restful import Resource, Api
 import json
 from cassandra.query import SimpleStatement
+import operator
 
 cluster = Cluster(['52.8.127.252'])
 session = cluster.connect('watch_events')
@@ -38,6 +39,19 @@ app = Flask(__name__)
 def hello():
   return render_template("index.html")
 
+@app.route("/weeklytrends")
+def weekly_trends():
+  cql = "SELECT * FROM top10weeklyrepos";
+  stmt = session.execute(cql)
+  response = []
+  for repo in stmt:
+    response.append(repo)
+  responselist = [(x.reponame,  x.watchcount) for x in response]
+  responselist.sort(key=operator.itemgetter(1), reverse = True)
+  jsonresponse = [{"reponame":x[0], "watchcount":x[1]} for x in responselist]
+  print jsonresponse
+  return render_template("weeklytrends.html", trends = jsonresponse)
+
 @app.route("/userid")
 def userid():
   return render_template("userid.html")
@@ -56,10 +70,14 @@ def watchcount_post():
 
 @app.route("/userid", methods=['POST'])
 def userid_post():
-  user_id = request.form["userid"]
+  username = request.form["userid"]
   cql = "SELECT userid FROM getuserid WHERE username=%s"
-  stmt = session.execute(cql, parameters=[user_id])
-  jsonresponse = {"userid": stmt[0].userid}
+  try:
+    stmt = session.execute(cql, parameters=[username])
+    print ("stmt: "), stmt
+    jsonresponse = {"userid": stmt[0].userid}
+  except:
+    jsonresponse = {"userid": username + " is not in the database"}
   return render_template("useridresult.html", user_id = jsonresponse)
   
 @app.route("/testd3")
@@ -83,9 +101,6 @@ def testgraph_post():
     reporow = session.execute(cql, parameters=[all])
     repojson.append({"name": all, "children": [{"name":reponame, "size":10000} for reponame in list(reporow[0].repo)]})
   jsonresponse = {"name": username, "children": [x for x in repojson]}
-  # f = open("./static/testfile.json" ,"w")
-  # f.write(json.dumps(jsonresponse))
-  # f.close()
   return render_template("testgraphtree.html", response = json.dumps(jsonresponse))
 
 @app.route("/cass/<repo>")
