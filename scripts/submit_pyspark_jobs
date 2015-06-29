@@ -1,1 +1,0 @@
-/usr/local/spark/bin/spark-submit --master spark://ip-172-31-2-89:7077 watchevents.py
