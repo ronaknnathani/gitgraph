@@ -1,9 +1,0 @@
-#!/usr/bin/env python
-
-import os
-import pickle 
-
-f = open("users_filenames_pickle","wb")
-filenames = os.listdir("../../data/users_data/")
-pickle.dump(filenames, f)
-
