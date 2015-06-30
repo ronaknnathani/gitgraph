@@ -4,8 +4,8 @@
 
 ## Index
 1. [Introduction] (README.md#1-introduction)
-2. Data Collection and Ingestion (README.md#2 - data collection and ingestion)
-3. Batch Processing 
+2. [Data Collection and Ingestion] (README.md#2 - data collection and ingestion)
+3. [Batch Processing] (README.md#3 - batch processing)
 4. Serving Layer
 5. Front End
 
@@ -18,8 +18,10 @@ GitHub Graph is a big data pipeline focused on answering- "For the users I follo
 * [GitHub Archive] (https://www.githubarchive.org/)
 [Ilya Grigorik] (https://www.igvita.com/) started the GitHub Archive project to record the public GitHub timeline, archive it, and make it easily accessible for further analysis. It has a very nice simple API to collect data on an hourly basis. I collected 850+ GB of data from this source. The data ranges from December 2011 to June 2015.
 
-For e.g., Activity for all of January 2015	wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
-
+For e.g., Activity for all of January 2015	can be collected using:
+    ```bash
+    $ wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
+    ````
 * [GitHub API] (https://developer.github.com/v3/users/)
 I collected 12M+ usernames witht their IDs from GitHub API's (https://api.github.com/users) endpoint. Using these  usernames I collected data regarding who these users are following using (https://api.github.com/users/<username>/following) endpoint. I have 3M+ of these records. 
 
@@ -27,7 +29,13 @@ GitHub's API rate limits me at 5000 calls/hour and I have around 25 GitHub API a
 
 ## 2. Data Collection and Ingestion 
 * The data from GitHub Archive is stored on HDFS with 4 data nodes and 1 name node. 
-* I have 3 producers collecting data from GitHub's API and shooting messages to Kafka. I consume these messages using [camus] (https://github.com/linkedin/camus). [Camus] (https://github.com/linkedin/camus) is a tool built by [Linkedin] (https://www.linkedin.com/) which is essentially a distributed consumer running a map reduce job underneath to consume messages from Kafka and sae it to HDFS.
+
+* I have 3 producers collecting data from GitHub's API and shooting messages to Kafka. I consume these messages using [camus] (https://github.com/linkedin/camus). [Camus] (https://github.com/linkedin/camus) is a tool built by [Linkedin] (https://www.linkedin.com/) which is essentially a distributed consumer running a map reduce job underneath to consume messages from Kafka and safe them to HDFS.
+
+Camus is really great for the Kafka->HDFS pipeline as it keeps a track of the last offset consumed for a topic and also allows to whitelist and blacklist topics so that one can consume only a subset of topics. Moreover, Camus also compresses the data before saving it to HDFS which saves space by an order of magnitude. Camus is very easy to set up and is worth the time spent, however, one important thing to note while setting up Camus is that the camus jar and log4j.xml must be in HADOOP's path to run camus. 
+
+## 3. Batch Processing
+
 
 
 
