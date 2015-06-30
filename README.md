@@ -19,9 +19,9 @@ GitHub Graph is a big data pipeline focused on answering- "For the users I follo
 [Ilya Grigorik] (https://www.igvita.com/) started the GitHub Archive project to record the public GitHub timeline, archive it, and make it easily accessible for further analysis. It has a very nice simple API to collect data on an hourly basis. I collected 850+ GB of data from this source. The data ranges from December 2011 to June 2015.
 
 For e.g., Activity for all of January 2015	can be collected using:
-    ```bash
+
     $ wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
-    ````
+
 * [GitHub API] (https://developer.github.com/v3/users/)
 I collected 12M+ usernames witht their IDs from GitHub API's (https://api.github.com/users) endpoint. Using these  usernames I collected data regarding who these users are following using (https://api.github.com/users/<username>/following) endpoint. I have 3M+ of these records. 
 
@@ -35,6 +35,7 @@ GitHub's API rate limits me at 5000 calls/hour and I have around 25 GitHub API a
 Camus is really great for the Kafka->HDFS pipeline as it keeps a track of the last offset consumed for a topic and also allows to whitelist and blacklist topics so that one can consume only a subset of topics. Moreover, Camus also compresses the data before saving it to HDFS which saves space by an order of magnitude. Camus is very easy to set up and is worth the time spent, however, one important thing to note while setting up Camus is that the camus jar and log4j.xml must be in HADOOP's path to run camus. 
 
 ## 3. Batch Processing
+I used Spark SQL for my batch processing 
 
 
 
