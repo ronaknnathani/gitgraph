@@ -4,7 +4,7 @@
 
 ## Index
 1. [Introduction] (README.md#1-introduction)
-2. Data Collection and Ingestion
+2. Data Collection and Ingestion (README.md#2 - data collection and ingestion)
 3. Batch Processing 
 4. Serving Layer
 5. Front End
@@ -25,7 +25,7 @@ I collected 12M+ usernames witht their IDs from GitHub API's (https://api.github
 
 GitHub's API rate limits me at 5000 calls/hour and I have around 25 GitHub API access token collecting data. Thanks to my fellow fellows.
 
-## 2. Data Collection and Ingestion (README.md#2 - data collection and ingestion)
+## 2. Data Collection and Ingestion 
 * The data from GitHub Archive is stored on HDFS with 4 data nodes and 1 name node. 
 * I have 3 producers collecting data from GitHub's API and shooting messages to Kafka. I consume these messages using [camus] (https://github.com/linkedin/camus). [Camus] (https://github.com/linkedin/camus) is a tool built by [Linkedin] (https://www.linkedin.com/) which is essentially a distributed consumer running a map reduce job underneath to consume messages from Kafka and sae it to HDFS.
 
