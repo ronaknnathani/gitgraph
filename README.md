@@ -8,7 +8,7 @@
 3. [Data Collection and Ingestion] (README.md#3 -data-collection-and-ingestion)
 4. [Batch Processing] (README.md#4 - batch-processing)
 5. [Serving Layer] (README.md#5 - serving-layer)
-6. Front End (README.md#5 - front-end)
+6. Front End (README.md#6 - front-end)
 
 ## 1. Introduction
 GitHub hosts maximum number of open source repositories and has more than 12.5M users. As a Data Engineer, I use open source technologies and am interested in being updated with what is trending. And it would be great if this could be personalized. To scratch this itch, I built GitHub Graph.
