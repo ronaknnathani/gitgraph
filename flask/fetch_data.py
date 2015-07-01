@@ -24,10 +24,10 @@ sync_table(userfollow)
 start = time.time()
 
 github_user_alvin = "alvin"
-github_pass_alvin = os.environ['alvin_pass']
+github_pass_alvin = os.environ['my_pass']
 
 github_user_vimal1 = "vimal1"
-github_pass_vimal1 = os.environ['vimal1_pass']
+github_pass_vimal1 = os.environ['barsha_pass']
 
 following_url = "https://api.github.com/users/"
 
