@@ -4,15 +4,18 @@
 
 ## Index
 1. [Introduction] (README.md#1-introduction)
-2. [Data Collection and Ingestion] (README.md#2 - data collection and ingestion)
-3. [Batch Processing] (README.md#3 - batch processing)
-4. Serving Layer
-5. Front End
+2. [AWS Clusters] (README.md#2- aws clusters)
+3. [Data Collection and Ingestion] (README.md#2 - data collection and ingestion)
+4. [Batch Processing] (README.md#3 - batch processing)
+5. Serving Layer
+6. Front End
 
 ## 1. Introduction
 GitHub hosts maximum number of open source repositories and has more than 12.5M users. As a Data Engineer, I use open source technologies and would like to be updated with what is trending. And it would be great if this could be personalized. To scratch this itch, I built GitHub Graph.
 
 GitHub Graph is a big data pipeline focused on answering- "For the users I follow, what are the repositories that those users follow and contribute to".
+
+
 
 ### Data Sources
 * [GitHub Archive] (https://www.githubarchive.org/)
@@ -27,15 +30,24 @@ I collected 12M+ usernames witht their IDs from GitHub API's (https://api.github
 
 GitHub's API rate limits me at 5000 calls/hour and I have around 25 GitHub API access token collecting data. Thanks to my fellow fellows.
 
-## 2. Data Collection and Ingestion 
+## 2. AWS Clusters 
+I used two clusters on Amazon-
+* 6 m3.xlarge for Spark Cluster
+
+## 3. Data Collection and Ingestion 
 * The data from GitHub Archive is stored on HDFS with 4 data nodes and 1 name node. 
 
 * I have 3 producers collecting data from GitHub's API and shooting messages to Kafka. I consume these messages using [camus] (https://github.com/linkedin/camus). [Camus] (https://github.com/linkedin/camus) is a tool built by [Linkedin] (https://www.linkedin.com/) which is essentially a distributed consumer running a map reduce job underneath to consume messages from Kafka and safe them to HDFS.
 
 Camus is really great for the Kafka->HDFS pipeline as it keeps a track of the last offset consumed for a topic and also allows to whitelist and blacklist topics so that one can consume only a subset of topics. Moreover, Camus also compresses the data before saving it to HDFS which saves space by an order of magnitude. Camus is very easy to set up and is worth the time spent, however, one important thing to note while setting up Camus is that the camus jar and log4j.xml must be in HADOOP's path to run camus. 
 
-## 3. Batch Processing
-I used Spark SQL for my batch processing 
+## 4. Batch Processing
+I used Spark SQL for my batch processing. For the data from GitHub Archive, I filter events like 'WatchEvent', 'ForkEvent', 'CommitCommentEvent' as they are representative of the fact that a user has either contributed to a repository or is following one. With these filtered events, I run a Spark job to create a two column schema with a user and a list of all the repositories that he/she has contributed to or is following. 
+
+The schema from GitHub Archive is inconsistent. So, I filter data from every year to just the columns I want and then run the Spark job mentioned above. The output of this is saved in Cassandra table with "username" as the primary key and list of repositories for that username as a column.
+
+I also use Spark SQL to filter out data from the users->following records as GitHub's API returns many json fields that are not important to the application. So, I just bring it down to a json record containing "username" and usernames of all the people followed by the user "username".
+
 
 
 
