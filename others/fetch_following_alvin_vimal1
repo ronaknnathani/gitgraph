@@ -1,0 +1,125 @@
+#!/usr/bin/env python
+
+import json
+from requests.auth import HTTPBasicAuth
+from urllib2 import urlopen, Request
+import os
+import requests
+import time
+from kafka import SimpleProducer, KafkaClient
+import gzip
+
+start = time.time()
+kafka = KafkaClient('ec2-52-8-111-39.us-west-1.compute.amazonaws.com:9092')
+producer = SimpleProducer(kafka)
+
+github_user_alvin = "alvin"
+github_pass_alvin = "1867a7a6c6a263307908df45f5adff47bf42b1d6"
+
+github_user_vimal1 = "vimal1"
+github_pass_vimal1 = "39862bdeabd76f87b6f2699f0720d11c41dc824b"
+
+following_url = "https://api.github.com/users/"
+
+#files = os.listdir("../../data/users_data")
+#filenums = [x[5:] for x in files]
+#filenumsints = [int(x) for x in filenums]
+#filenumsdesired = [x for x in filenumsints if x < 1500000]
+#filesdesired = ["users"+str(x) for x in filenumsdesired]
+
+per_page="&per_page=100"
+
+f = open("error_fetch_following_alvin_vimal1","w")
+i=0
+def get_following(url_tail, user, following, page):
+  global i
+  global github_user_alvin
+  global github_user_vimal1
+  global github_pass_alvin
+  global github_pass_vimal1
+  if i < 4999:
+    json_response = []
+    github_user = github_user_alvin
+    github_pass = github_pass_alvin
+    try:
+      request = Request(following_url + user + "/following" + url_tail + per_page)
+      request.add_header('Authorization', 'token %s' % github_pass)
+      response = urlopen(request, timeout=5)
+      json_response = json.loads(response.read())
+    except requests.exceptions.Timeout as e:
+      time.sleep(30)
+      return following
+    except requests.exceptions.ConnectionError as e:
+      time.sleep(30)
+      return following
+    except requests.exceptions.HTTPError as e:
+      time.sleep(30)
+      return following
+    except Exception, e:
+      print e
+      return following
+    i+=1
+  else:
+    json_response = []
+    github_user = github_user_vimal1
+    github_pass = github_pass_vimal1
+    try:
+      request = Request(following_url + user + "/following" + url_tail + per_page)
+      request.add_header('Authorization', 'token %s' % github_pass)
+      response = urlopen(request, timeout=5)
+      json_response = json.loads(response.read())
+    except requests.exceptions.Timeout as e:
+      time.sleep(30)
+      return following
+    except requests.exceptions.ConnectionError as e:
+      time.sleep(30)
+      return following
+    except requests.exceptions.HTTPError as e:
+      time.sleep(30)
+      return following
+    except Exception, e:
+      print e
+      return following
+    i+=1
+    if i==9998:
+      i = 0
+  #response = requests.get(following_url + user + "/following" + url_tail + per_page, auth=HTTPBasicAuth(github_user, github_pass))
+  #json_response = json.loads(response.text)
+  if json_response == [] or page==10:
+    return following
+  else:
+    following += json_response
+    page +=1
+    get_following("?page="+str(page), user, following, page)
+    return following
+
+# flag = 0
+count = 0
+with open("following-8500001to9000000.json","a") as op_file:
+  with gzip.open("../data/github-usernames.gz", "r") as ip_file:
+    #try:
+    for line in ip_file:
+      users = json.loads(line)
+      user = users["login"]
+      user_id = users["id"]
+      print "\ncount: ", count, "id: : ", user_id
+      if user_id < 8500001 or user_id > 9000000:
+        continue
+      following = []
+      following_dict = {}
+      following = get_following("?page=1", user, [], 1)
+      following_dict["login"] = user
+      following_dict["id"] = user_id
+      following_dict["following"] = following
+      print following_dict
+      count += 1
+      op_file.write(json.dumps(following_dict))
+      producer.send_messages("scrap-following-16", json.dumps(following_dict))
+      print "total people followed: ", len(following)
+    #except Exception, e:
+     # print e
+
+stop = time.time()
+print stop-start
+
+

@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+from pyspark import SparkContext
+from pyspark.sql import SQLContext
+from cqlengine import columns
+from cqlengine.models import Model
+from cqlengine import connection
+from cqlengine.management import sync_table
+import json
+
+class userfollowing(Model):
+  username = columns.Text(primary_key=True)
+  following = columns.List(columns.Text)
+  def __repr__(self):
+    return '%s %d' % (self.username, self.following)
+
+connection.setup(['127.0.0.1'], "watch_events")
+sc = SparkContext("spark://ip-172-31-2-89:7077", "userfollowing")
+sqlContext = SQLContext(sc)
+
+df = sqlContext.jsonFile("hdfs://ec2-52-8-127-252.us-west-1.compute.amazonaws.com:9000/camus/topics/scrap-following-3/hourly/2015/06/23/11/*")
+
+def follows(x):
+    try:
+        following_list = []
+        if x == []:
+            return following_list
+        else:
+            for user in x:
+                following_list.append(json.loads(user)['login'])
+            return following_list
+    except:
+        print x
+
+df3_following = df3.map(lambda x: (x.login, follows(x.following))).collect()
+
+sync_table(userfollowing)
+
+for i, val in enumerate(user_following_list):
+  userfollowing.create(username = val[0], following = val[1])
+  print i 

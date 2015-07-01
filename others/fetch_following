@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+
+import json
+from requests.auth import HTTPBasicAuth
+import os
+import requests
+import time
+from kafka import SimpleProducer, KafkaClient
+
+start = time.time()
+kafka = KafkaClient('ec2-52-8-111-39.us-west-1.compute.amazonaws.com:9092')
+producer = SimpleProducer(kafka)
+
+github_user_ronak = os.environ['github_user']
+github_pass_ronak = os.environ['github_pass']
+
+github_user_sundar = os.environ['github_sundar']
+github_pass_sundar = os.environ['github_sundar_pass']
+
+following_url = "https://api.github.com/users/"
+
+files = os.listdir("../../data/users_data")
+filenums = [x[5:] for x in files]
+filenumsints = [int(x) for x in filenums]
+filenumsdesired = [x for x in filenumsints if x < 1500000]
+filesdesired = ["users"+str(x) for x in filenumsdesired]
+
+per_page="&per_page=100"
+
+f = open("error_fetch_following","w")
+i=0
+def get_following(url_tail, user, following, page):
+  global i
+  global github_user_ronak
+  global github_user_sundar
+  global github_pass_ronak
+  global github_pass_sundar
+  if i < 4999:
+    github_user = github_user_ronak
+    github_pass = github_pass_ronak
+    i+=1
+  else:
+    github_user = github_user_sundar
+    github_pass = github_pass_sundar
+    i+=1
+    if i==9998:
+      i = 0
+  try:
+    response = requests.get(following_url + user + "/following" + url_tail + per_page, auth=HTTPBasicAuth(github_user, github_pass))
+  #response = requests.get(following_url + user + "/following" + url_tail + per_page)
+    json_response = json.loads(response.text)
+  #print json_response
+    if json_response == [] or page==10:
+      return following
+    else:
+      following += json_response
+      page +=1
+      get_following("?page="+str(page), user, following, page)
+      return following
+  except requests.exceptions.Timeout as e:
+      time.sleep(30)
+      return following
+  except requests.exceptions.ConnectionError as e:
+      time.sleep(30)
+      return following
+  except requests.exceptions.HTTPError as e:
+      time.sleep(30)
+      return following
+  except Exception, e:  
+    return following
+
+count = 0
+flag = 0
+with open("following-1500001to2000000_2.json","a") as op_file:
+  try:  
+    for filename in filesdesired:
+      with open("../../data/users_data/"+filename, "r") as ip_file:
+        if filename.startswith("users"):
+	  print "\nfrom file: ", filename
+          json_records = json.load(ip_file)
+          usernames = [(x['login'], x['id']) for x in json_records]
+          for users in usernames:
+            user = users[0]
+            user_id = users[1]
+            if user_id==526959:
+	      flag=1
+            if flag==0:
+              continue
+            print "\ncount: ", count, "id: : ", user_id
+	    following = []
+            following_dict = {}
+            following = get_following("?page=1", user, [], 1)
+            following_dict["login"] = user
+            following_dict["id"] = user_id
+            following_dict["following"] = following
+            print following
+ 	    count += 1
+	    print following_dict
+	    op_file.write(json.dumps(following_dict))
+            producer.send_messages("scrap-following-4", json.dumps(following_dict))
+            print "total people followed: ", len(following)
+  except Exception, e:
+    print e
+
+stop = time.time()
+print stop-start
+
