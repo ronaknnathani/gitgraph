@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block weeklytrends %}
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
 
        <div class="row" style="min-height:100vh;">
                 <div class="col-md-10 col-md-offset-1 text-center" style="padding-top:10vh; font-weight:300">
@@ -10,123 +10,71 @@
 		<div class="col-md-10 col-md-offset-1 text-center" style="font-size:100px;">
                                     <div id="container" style="width:100%; height:400px;"></div>
 			    <!--<script src="../static/js/weeklytrends.js"></script>-->
-                                    <script type="text/javascript">
-                                    var trends = {{trends | safe}}
-                                    $(function () {
-
-    // Create the chart
-                                                $('#container').highcharts({
-                                                    chart: {
-                                                        type: 'column'
-                                                    },
-                                                    title: {
-                                                        text: 'by # of Stargazers'
-                                                    },
-                                                    xAxis: {
-                                                        type: 'repositories'
-                                                    },
-
-                                                    legend: {
-                                                        enabled: false
-                                                    },
-
-                                                    plotOptions: {
-                                                        series: {
-                                                            borderWidth: 0,
-                                                            dataLabels: {
-                                                                enabled: true
-                                                            }
+                                     <script>
+                                          $(function () { 
+                                            $('#container').highcharts({
+                                               chart: {
+                                                    type: 'column'
+                                                },
+                                                title: {
+                                                    text: 'by # of Stargazers'
+                                                },
+                                                tooltip: {
+                                                    valueSuffix: 'stars',
+                                                    valueDecimals: 0
+                                                },
+                                                plotOptions: {
+                                                    series: {
+                                                        marker: {
+                                                            radius: 6
                                                         }
-                                                    },
-
-                                                    series: [{
-                                                        name: 'Stars',
-                                                        colorByPoint: true,
-                                                        data: [{
-                                                            name: 'Animals',
-                                                            y: 5,
-                                                            drilldown: 'animals'
-                                                        }, {
-                                                            name: 'Fruits',
-                                                            y: 2,
-                                                            drilldown: 'fruits'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        // }, {
-                                                        //     name: {{trends.reponame}},
-                                                        //     y: {{trends.watchcount}},
-                                                        //     drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, {
-                                                            name: 'Cars',
-                                                            y: 4,
-                                                            drilldown: 'cars'
-                                                        }, 
-                                                        ]
-                                                    }],
-                                                    drilldown: {
-                                                        series: [{
-                                                            id: 'animals',
-                                                            data: [
-                                                                ['Cats', 4],
-                                                                ['Dogs', 2],
-                                                                ['Cows', 1],
-                                                                ['Sheep', 2],
-                                                                ['Pigs', 1]
-                                                            ]
-                                                        }, {
-                                                            id: 'fruits',
-                                                            data: [
-                                                                ['Apples', 4],
-                                                                ['Oranges', 2]
-                                                            ]
-                                                        }, {
-                                                            id: 'cars',
-                                                            data: [
-                                                                ['Toyota', 4],
-                                                                ['Opel', 2],
-                                                                ['Volkswagen', 2]
-                                                            ]
-                                                        }]
                                                     }
-                                                });
+                                                },
+                                                legend: {
+                                                    layout: 'vertical',
+                                                    align: 'right',
+                                                    verticalAlign: 'middle',
+                                                    borderWidth: 0
+                                                },
+                                                xAxis: {
+                                                    categories: ['{{trends[0][0]}}',
+                                                                 '{{trends[1][0]}}', 
+                                                                 '{{trends[2][0]}}', 
+                                                                 '{{trends[3][0]}}',
+                                                                 '{{trends[4][0]}}',
+                                                                 '{{trends[5][0]}}',
+                                                                 '{{trends[6][0]}}',
+                                                                 '{{trends[7][0]}}',
+                                                                 '{{trends[8][0]}}',
+                                                                 '{{trends[9][0]}}'
+                                                                 ], 
+                                                    title: {
+                                                        text: 'Repositories'
+                                                    }
+                                                },
+                                                yAxis: {
+                                                    title: {
+                                                        text: 'Stars'
+                                                    }
+                                                },
+                                                series: [{
+                                                    name: 'Last week',
+                                                    data: [{{trends[0][1]}},
+                                                    {{trends[1][1]}},
+                                                    {{trends[2][1]}},
+                                                    {{trends[3][1]}},
+                                                    {{trends[4][1]}},
+                                                    {{trends[5][1]}},
+                                                    {{trends[6][1]}},
+                                                    {{trends[7][1]}},
+                                                    {{trends[8][1]}},
+                                                    {{trends[9][1]}}
+                                                    ], 
+                                                    color: '#43aaa3'
+                                                }]
                                             });
-
-
-                                    </script>
+                                    });
+                                </script>
 		</div>
         </div>
 

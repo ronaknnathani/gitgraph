@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+
+from flask import Flask
+from flask.ext.github import GitHub
+import os
+
+app = Flask(__name__)
+app.config['GITHUB_CLIENT_ID'] = os.environ['client_id']
+app.config['GITHUB_CLIENT_SECRET'] = os.environ['client_secret']
+
+# For GitHub Enterprise
+# app.config['GITHUB_BASE_URL'] = 'https://HOSTNAME/api/v3/'
+# app.config['GITHUB_AUTH_URL'] = 'https://HOSTNAME/login/oauth/'
+
+github = GitHub(app)
+
+@app.route('/')
+def index():
+    if g.user:
+        t = 'Hello! <a href="{{ url_for("user") }}">Get user</a> ' \
+            '<a href="{{ url_for("logout") }}">Logout</a>'
+    else:
+        t = 'Hello! <a href="{{ url_for("login") }}">Login</a>'
+
+    return render_template_string(t)
+
+@app.route('/login')
+def login():
+    if session.get('user_id', None) is None:
+        return github.authorize()
+    else:
+        return 'Already logged in'
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('index'))
+
+@app.route('/user')
+def user():
+    return str(github.get('user'))
+
+
+
+@app.route('/github-callback')
+@github.authorized_handler
+def authorized(oauth_token):
+    next_url = request.args.get('next') or url_for('index')
+    if oauth_token is None:
+        flash("Authorization failed.")
+        return redirect(next_url)
+
+    user = User.query.filter_by(github_access_token=oauth_token).first()
+    if user is None:
+        user = User(oauth_token)
+        db_session.add(user)
+
+    user.github_access_token = oauth_token
+    db_session.commit()
+    return redirect(next_url)
+
+@github.access_token_getter
+def token_getter():
+    user = g.user
+    if user is not None:
+        return user.github_access_token
+
+if __name__ == '__main__':
+    # init_db()
+    app.run(debug=True)
