@@ -115,3 +115,32 @@ footer {
     font-family: 'Open Sans', sans-serif;
     font-size: 18px;
 }
+
+.social-buttons{
+    font-size:48px;
+    text-align: center;
+}
+
+.gmail{
+    color:#fff;
+}
+
+.gmail:hover{
+    color:#B71C1C;
+}
+
+.linkedin{
+    color:#fff;
+}
+
+.linkedin:hover{
+    color:#1b5480;
+}
+
+.github{
+    color:#fff;
+}
+
+.github:hover{
+    color:#677c89;
+}
