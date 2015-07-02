@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+
+from bs4 import BeautifulSoup
+import pickle
+import urllib
+import mechanize
+import json
+import os
+from kafka import SimpleProducer, KafkaClient
+import json
+
+kafka = KafkaClient("ec2-52-8-111-39.us-west-1.compute.amazonaws.com:9092")
+producer = SimpleProducer(kafka)
+
+br = mechanize.Browser()
+br.set_handle_robots(False)
+
+followers_url = "https://github.com/"
+f = open("following-1500001to2000000.json","wb")
+
+files = os.listdir("../../data/users_data")
+filenums = [x[5:] for x in files]
+filenumsints = [int(x) for x in filenums]
+filenumsdesired = [x for x in filenumsints if (x >= 1500000 and x <= 2000000)]
+filesdesired = ["users"+str(x) for x in filenumsdesired]
+
+#output = []
+
+def get_followers(url_tail, user, followers, page):
+  #print len(followers)
+  response = urllib.urlopen(followers_url + user + "/following" + url_tail)
+  soup = BeautifulSoup(response)
+  followers_html = soup.find_all("h3", class_="follow-list-name")
+  if followers_html == []:
+    return followers
+  else:
+    for follower in followers_html:
+      followers.append((follower.a["href"][1:],follower.a.get_text()))
+    page +=1
+    get_followers("?page="+str(page), user, followers, page)
+    return followers
+
+count = 1
+
+for filename in filesdesired:
+  ip = open("../../data/users_data/"+filename, "rb")
+  json_records = json.load(ip)
+  usernames = [(x['login'], x['id']) for x in json_records]
+  for users in usernames:
+    #op = open("../../data/follwing_data/following"+str(count),"wb")
+    user = users[0]
+    user_id = users[1]
+    followers = []
+    followers_dict = {}
+    print "\ncount: ", count, " for user: ", user
+    followers = get_followers("", user, [], 1)
+    print "total people followed: ", len(followers)
+    followers_dict["login"] = user
+    followers_dict["id"] = user_id
+    followers_dict["following"] = followers
+    producer.send_messages("scrap-following-1", json.dumps(followers_dict))
+    f.write(json.dumps(followers_dict)+"\n")
+   # output.append(followers_dict)
+    count += 1
+
+#json.dump(output, f)
+f.close()
