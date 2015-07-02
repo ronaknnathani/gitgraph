@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+import json
+from pprint import pprint
+from kafka import SimpleProducer, KafkaClient
+
+# To send messages synchronously
+kafka = KafkaClient("localhost:9092")
+producer = SimpleProducer(kafka)
+
+# Note that the application is responsible for encoding messages to type str
+producer.send_messages("my-topic", "this method", "is variadic")
+
+
+def sentences(file_name):
+    with open(file_name) as f:
+        for line in f:
+            data = json.loads(line)
+            from kafka import SimpleProducer, KafkaClient
+
+# To send messages synchronously
+kafka = KafkaClient("localhost:9092")
+producer = SimpleProducer(kafka)
+
+# Note that the application is responsible for encoding messages to type str
+producer.send_messages("my-topic", "some message")
+
+sentences(ip_file)
