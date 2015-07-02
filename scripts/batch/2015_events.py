@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # importing SparkContext and SQLContext from pyspark for batch processing
 from pyspark import SparkContext
 from pyspark.sql import SQLContext
@@ -25,7 +27,7 @@ master_public_dns = os.environ['master_public_dns']
 sc = SparkContext("spark://" + master_ip + ":7077", "2015_events")
 sqlContext = SQLContext(sc)
 
-# reading data for 2015from HDFS
+# reading events data for 2015 from HDFS
 df15 = sqlContext.jsonFile(master_public_dns + ":9000/data2015/*.*")
 
 # filtering rows with just the three relevant events
@@ -61,6 +63,6 @@ user_repo15 = user_repo_map15.map(lambda x: {"username":x[0], "repo":[user for s
 connection.setup(['52.8.127.252','52.8.41.216'], "watch_events")
 sync_table(userrepo)
 
-# writing all values to cassandra table
+# writing all values to cassandra table "userrepo"
 for val in user_repo15:
   userrepo.create(username = val['username'], repo = val['repo'])
