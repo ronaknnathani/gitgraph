@@ -24,7 +24,7 @@ master_ip = os.environ['master_ip']
 master_public_dns = os.environ['master_public_dns']
 
 # setting SparkContext and SQLContext
-sc = SparkContext("spark://" + master_ip + ":7077", "2015_events")
+sc = SparkContext("spark://" + master_ip + ":7077", "2011_events")
 sqlContext = SQLContext(sc)
 
 # reading events data for 2011 from HDFS
