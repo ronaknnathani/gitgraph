@@ -28,7 +28,7 @@ sc = SparkContext("spark://" + master_ip + ":7077", "2015_events")
 sqlContext = SQLContext(sc)
 
 # reading events data for 2011 from HDFS
-df11 = sqlContext.jsonFile(master_public_dns + ":9000/data_jan2015/2011-*.*")
+df11 = sqlContext.jsonFile("hdfs://" + master_public_dns + ":9000/data_jan2015/2011-*.*")
 
 # filtering rows with just the three relevant events
 df11_watch = df11.filter("type='WatchEvent'")
