@@ -1,17 +1,27 @@
 {% extends "base.html" %}
-{% block testgraph %}
+{% block graph_query %}
         <div class="row" style="height:100vh;">
                 <div class="col-md-8 col-md-offset-2 text-center" style="margin-top:25vh;">
                         <h3>For the users you follow, check what are the respositories that they follow and contribute to</h3>
                 </div>
-                <div class="col-md-4 col-md-offset-4"  style="margin-top:30px;">
-                        <form action="/graph" method="POST">
+                <div class="col-md-4 col-md-offset-4 text-center">
+                        <h2 style="font-weight:300;">Enter GitHub Username</h2>
+                        <br />
+                        <form class="form-inline" action="/graph" method="POST">
                                 <div class="form-group text-center">
-                                        <label style="font-weight:300; font-size:36px;">Enter GitHub username</label>
-                                        <br /><br />
-                                        <input type="text" class="form-control" name="username" placeholder="username">
-                                        <br />
-                                        <button type="submit" value="Send" name="userid-container" class="btn btn-default id-submit">Submit</button>
+                                        <div class="input-group">
+                                                <input style="border-radius:4px;" type="text" class="form-control" name="username" placeholder="username">
+                                        </div>
+                                        <select class="form-control" name="year">
+                                                <option>2015</option>
+                                                <option>2014</option>
+                                                <option>2013</option>
+                                                <option>2012</option>
+                                                <option>Dec. 2011</option>
+                                                <option>All</option>
+                                        </select>
+                                        <br /> <br />
+                                        <button type="submit" value="Send" name="username-container" class="btn btn-default id-submit">Submit</button>
                                 </div>
                         </form>
                 </div>

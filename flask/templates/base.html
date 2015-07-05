@@ -77,19 +77,13 @@
 
                 {% block index %}{% endblock %}
                 {% block userid %}{% endblock %}
-                {% block watchcount %}{% endblock %}
-                {% block wcresult %}{% endblock %}
                 {% block useridresult %}{% endblock %}
-                {% block allrepo %}{% endblock %}
-                {% block top10repo %}{% endblock %}
-                {% block testgraph %}{% endblock %}
-                {% block testgraphresult %}{% endblock %}
+                {% block graph_query %}{% endblock %}
                 {% block weeklytrends %}{% endblock %}
                 {% block slides %}{% endblock %}
-                {% block testgraph_noresult %} {% endblock %}
+                {% block graph_noresult %} {% endblock %}
                 {% block nofollowing %} {% endblock %}
                 {% block no_userid %} {% endblock %}
-
 
             <div id="footer" class="footerme">
                 
@@ -125,6 +119,7 @@
                         </p>
                     </footer>
                 </div>
+                <script src="../static/js/bootstrap.min.js"></script>
         </body>
 </html>
 

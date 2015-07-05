@@ -68,6 +68,18 @@ def graph():
 @app.route("/graph", methods=['POST'])
 def graph_post():
   username = request.form["username"] # get username entered
+  year = request.form["year"]
+  if year=="2015":
+    table = "userrepo"
+  elif year=="2014":
+    table = "userrepo2014"
+  elif year=="2013":
+    table = "userrepo2013"
+  elif year=="2012":
+    table = "userrepo2012"
+  elif year=="Dec. 2011":
+    table = "userrepo2011"
+
   cql = "SELECT following from userfollow WHERE username=%s" # build the query
   try:
     stmt = session.execute(cql, parameters=[username]) # execute the query
@@ -79,7 +91,7 @@ def graph_post():
       return render_template("nofollowing.html", response=username)
     repojson = []
     for all in following_list: # for all users that the given user follows get the respective repos
-      cql = "SELECT repo from userrepo WHERE username=%s"
+      cql = "SELECT repo from "+ table +" WHERE username=%s"
       reporow = session.execute(cql, parameters=[all])
       if reporow==[]:
         repojson.append({"name": all}) # if there are no repos the there are no children to the node, just people followed by the user
