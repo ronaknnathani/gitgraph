@@ -10,7 +10,7 @@
 5. [Presentation] (README.md#6 - front-end)
 
 ## 1. Introduction
-[GitHub Graph](http://githubgraph.com/) is a tool to enable developers to stay updated with the trends on GitHub that they would be interested in. It uses [GitHub Archive] (https://www.githubarchive.org/) and [GitHub API] (https://developer.github.com/v3/users/) as data sources to serve the application. Esentially, it is a big data pipeline focused on answering- "For the users I follow, what are the repositories that those users follow and contribute to".
+[GitHub Graph](http://githubgraph.com/) is a tool to enable developers to stay updated with the trends on [GitHub](https://github.com/) that they would be interested in. It uses [GitHub Archive] (https://www.githubarchive.org/) and [GitHub API] (https://developer.github.com/v3/users/) as data sources to serve the application. Esentially, it is a big data pipeline focused on answering- "For the users I follow, what are the repositories that those users follow and contribute to".
 
 ![Example graph query] (flask/static/img/graph.png)
 
@@ -29,9 +29,9 @@ An example to collect acttivity for all of January 2015	from [GitHub Archive] (h
     $ wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
 
 * [GitHub API] (https://developer.github.com/v3/users/): 
-[GitHub Graph] (http://githubgraph.com/) has 12M+ GitHub usernames with their IDs from GitHub API's https://api.github.com/users endpoint. Using these  usernames it also collects data regarding who these users are following using https://api.github.com/users/username/following endpoint. There are over 4M such records in the database at present. Moreover, if the queried username is not in the database, records for that username are collected from the API in real time, stored in the database and results are generated.
+[GitHub Graph] (http://githubgraph.com/) has 12M+ GitHub usernames with their IDs from [GitHub's API's] (https://developer.github.com/v3/users/) https://api.github.com/users endpoint. Using these  usernames it also collects data regarding who these users are following using https://api.github.com/users/username/following endpoint. There are over 4M such records in the database at present. Moreover, if the queried username is not in the database, records for that username are collected from the API in real time, stored in the database and results are generated.
 
- GitHub's API has a rate limit of 5000 calls/hour and around 25 GitHub API access tokens were used to collect data. Thanks to my fellow fellows at Insight and friends in India.
+ GitHub's API has a rate limit of 5000 calls/hour and around 25 [GitHub API] (https://developer.github.com/v3/users/) access tokens were used to collect data. Thanks to my fellow fellows at Insight and friends in India.
 
 ## 2. AWS Clusters 
 [GitHub Graph] (http://githubgraph.com/) is powered by three clusters on AWS-
