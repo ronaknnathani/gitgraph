@@ -5,66 +5,89 @@
 ## Index
 1. [Introduction] (README.md#1-introduction)
 2. [AWS Clusters] (README.md#2-aws-clusters)
-3. [Data Collection and Ingestion] (README.md#3 -data-collection-and-ingestion)
-4. [Batch Processing] (README.md#4 - batch-processing)
-5. [Serving Layer] (README.md#5 - serving-layer)
-6. [Front End] (README.md#6 - front-end)
+3. [Data Pipeline] (README.md#4 - data-pipeline)
+4. [Front End] (README.md#6 - front-end)
+5. [Presentation] (README.md#6 - front-end)
 
 ## 1. Introduction
-GitHub hosts maximum number of open source repositories and has more than 12.5M users. As a Data Engineer, I use open source technologies and am interested in being updated with what is trending. And it would be great if this could be personalized. To scratch this itch, I built GitHub Graph.
+[GitHub Graph](http://githubgraph.com/) is a tool to enable developers to stay updated with the trends on [GitHub](https://github.com/) that they would be interested in. It uses [GitHub Archive] (https://www.githubarchive.org/) and [GitHub API] (https://developer.github.com/v3/users/) as data sources to serve the application. Esentially, it is a big data pipeline focused on answering- "For the users I follow, what are the repositories that those users follow and contribute to".
 
-GitHub Graph is a big data pipeline focused on answering- "For the users I follow, what are the repositories that those users follow and contribute to".
+![Example graph query] (flask/static/img/graph.png)
 
+[GitHub Graph] (http://githubgraph.com/) also shows top 10 weekly trending repositories based on the number of stars.
 
+![Weekly Trending repos] (flask/static/img/trending.png)
 
 ### Data Sources
 * [GitHub Archive] (https://www.githubarchive.org/): 
-[Ilya Grigorik] (https://www.igvita.com/) started the GitHub Archive project to record the public GitHub timeline, archive it, and make it easily accessible for further analysis. It has a very simple API to collect data on the granularity of an hour. I collected 850+ GB of data from this source. The data ranges from December 2011 till now.
+[Ilya Grigorik] (https://www.igvita.com/) started the [GitHub Archive] (https://www.githubarchive.org/) project to record the public GitHub timeline, archive it, and make it easily accessible for further analysis. It has a very simple API to collect data on the granularity of an hour. [GitHub Graph] (http://githubgraph.com/) pulled 850+ GB of data from this source ranging from December 2011 till today. These are clean nested json responses with one event on each line. Events for example are 'WatchEvent', 'ForkEvent', 'CommitCommentEvent', etc.
 
-For e.g., Activity for all of January 2015	can be collected using:
+![Weekly Trending repos] (flask/static/img/publictimeline.png)
+
+An example to collect acttivity for all of January 2015	from [GitHub Archive] (https://www.githubarchive.org/) is:
 
     $ wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
 
 * [GitHub API] (https://developer.github.com/v3/users/): 
-I collected 12M+ usernames with their IDs from GitHub API's (https://api.github.com/users) endpoint. Using these  usernames I collected data regarding who these users are following using (https://api.github.com/users/<username>/following) endpoint. I have 4M+ of these records. 
+[GitHub Graph] (http://githubgraph.com/) has 12M+ GitHub usernames with their IDs from [GitHub's API's] (https://developer.github.com/v3/users/) https://api.github.com/users endpoint. Using these  usernames it also collects data regarding who these users are following using https://api.github.com/users/username/following endpoint. There are over 4M such records in the database at present. Moreover, if the queried username is not in the database, records for that username are collected from the API in real time, stored in the database and results are generated.
 
-GitHub's API rate limits me at 5000 calls/hour and I have around 25 GitHub API access token collecting data. Thanks to my fellow fellows at Insight.
-
-I also added a feature such that, when the records of the queried username are not in the database, GitHub API is accessed in real time to populate the database for that username and the results are generated.
+ GitHub's API has a rate limit of 5000 calls/hour and around 25 [GitHub API] (https://developer.github.com/v3/users/) access tokens were used to collect data. Thanks to my fellow fellows at Insight and friends in India.
 
 ## 2. AWS Clusters 
-I used three clusters on AWS-
-* 3 m3.large producers collecting data from GitHub's API and sending these messages to Kafka
-![alt text](/flask/static/isave
+[GitHub Graph] (http://githubgraph.com/) is powered by three clusters on AWS-
+* 3 m3.large producers collecting data from GitHub's API and sending these messages to [Kafka] (http://kafka.apache.org/)
 
-* 6 m3.xlarge for Spark Cluster
-* 5 m3.large for HDFS, Kafka, Cassandra, Zookeeper
+![Producers] (/flask/static/img/producers.png)
 
-## 3. Data Collection and Ingestion 
-* The data from GitHub Archive is stored on HDFS with 4 data nodes and 1 name node. 
+* 6 m3.xlarge for [Spark] (https://spark.apache.org/) Cluster
+* 5 m3.large for [HDFS] (http://hadoop.apache.org/docs/r1.2.1/hdfs_design.html), [Kafka] (http://kafka.apache.org/), [Cassndra](http://cassandra.apache.org/), [Zookeeper] (https://zookeeper.apache.org/)
 
-* I have 3 producers collecting data from GitHub's API and shooting messages to Kafka. I consume these messages using [camus] (https://github.com/linkedin/camus). [Camus] (https://github.com/linkedin/camus) is a tool built by [Linkedin] (https://www.linkedin.com/) which is essentially a distributed consumer running a map reduce job underneath to consume messages from Kafka and save them to HDFS.
+![Batch] (/flask/static/img/clusters.png)
 
-Camus is really great for the Kafka->HDFS pipeline as it keeps a track of the last offset consumed for a topic and also allows to whitelist and blacklist topics so that one can consume only a subset of topics. Moreover, Camus also compresses the data before saving it to HDFS which saves space by an order of magnitude. Camus is very easy to set up and is worth the time spent, however, one important thing to note while setting up Camus is that the camus jar and log4j.xml must be in HADOOP's path to run camus. 
+## 3. Data Pipeline
 
-## 4. Batch Processing
-I used Spark SQL for my batch processing. For the data from GitHub Archive, I filter events like 'WatchEvent', 'ForkEvent', 'CommitCommentEvent' as they are representative of the fact that a user has either contributed to a repository or is following one. With these filtered events, I run a Spark job to create a two column schema with a user and a list of all the repositories that he/she has contributed to or is following. 
+![Pipeline] (/flask/static/img/pipeline.png)
 
-The schema from GitHub Archive is inconsistent. So, I filter data from every year to just the columns I want and then run the Spark job mentioned above. The output of this is saved in Cassandra table with "username" as the primary key and list of repositories for that username as a column.
+ * ### Data Collection and Ingestion 
+  * The data from [GitHub Archive](https://www.githubarchive.org/) is stored on [HDFS](http://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) with 4 data nodes and 1 name node. 
+  
+  * 3 producers are collecting data from GitHub's API and shooting messages to [Kafka](http://kafka.apache.org/). These messages are consumed using [camus] (https://github.com/linkedin/camus). [Camus] (https://github.com/linkedin/camus) is a tool built by [Linkedin] (https://www.linkedin.com/) which is essentially a distributed consumer running a map reduce job underneath to consume messages from [Kafka] (http://kafka.apache.org/) and save them to [HDFS](http://hadoop.apache.org/docs/r1.2.1/hdfs_design.html).
+  
+  [Camus](https://github.com/linkedin/camus) is great for the [Kafka](http://kafka.apache.org/)->[HDFS](http://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) pipeline as it keeps a track of the last offset consumed for a topic and also allows to whitelist and blacklist topics so that one can consume only a subset of topics. Moreover, it also compresses the data before saving it to [HDFS] (http://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) which saves space by an order of magnitude. Camus is very easy to set up and is worth the time spent, however, one important thing to note while setting it up is that the camus jar and log4j.xml must be in HADOOP's path to run camus. 
 
-I also use Spark SQL to filter out data from the users->following records as GitHub's API returns many json fields that are not important to the application. So, I just bring it down to a json record containing "username" and usernames of all the people followed by the user "username".
+ * ### Batch Processing
+  [Spark SQL](https://spark.apache.org/docs/1.3.1/api/python/pyspark.sql.html) is used here for all the batch processing. For the data from [GitHub Archive] (https://www.githubarchive.org/), events like 'WatchEvent', 'ForkEvent', 'CommitCommentEvent' ae filtered as they are representative of the fact that a user has either contributed to a repository or is following one. 
 
-## 5. Serving Layer
-I use Cassandra to save my batch results. I have three main tables in Cassanrdra
-* Userrepo- Key is the username and value is the list of repos that the user follows and has contributed to.
-* Userfollow - Key is the username and value is the list of usernames of the people who user follows.
-* Weeklytrends - Key is the reponame and value are the watch counts in the past week.
+  The data from [GitHub archive](https://www.githubarchive.org/) has inconsistent schema. It is filtered in the batch process to a two column schema with a user and a list of all the repositories that he/she has contributed to or is following. Below is an example of schema from 2015 and 2012 and the resulting two column schema.
+  
+  ![Pipeline] (/flask/static/img/inconsistent\ schema.png)
 
-## 6. Front end
-I use Flask for the web app and D3 to visualize results.
+  The two column schema form the batch process is used to create a table in [Cassndra](http://cassandra.apache.org/)
+  ![Pipeline] (/flask/static/img/userrepo.png)
+  
+  [GitHub's API](https://developer.github.com/v3/) returns many fields in its json response for usernames and IDs which are not really important for the application. So, 12GB of raw data for 12M+ users is reduced to 450MB by extrcting login names and IDs in the batch process from the raw responses and is further compressed while consumed by [Camus](https://github.com/linkedin/camus) to 122MB.
+  
+  ![Pipeline] (/flask/static/img/users.png)
 
-## 7. Presentation
-My presentation can be found here - http://www.slideshare.net/ronaknnatnani/githubgraph
+  These usernames are used to pull records of who these users are following to create the [Cassndra](http://cassandra.apache.org/) table below.
+  
+  ![Pipeline] (/flask/static/img/userfollowing.png)
+
+  Weekly trends are learned from 'WatchEvents' in [GitHub archive](https://www.githubarchive.org/) and a table with repo names and corresponding watch counts is created.
+
+ * ### Serving Layer
+  [Cassndra](http://cassandra.apache.org/) is used to to save the batch results and serve the front end. Three main tables serve the application-
+  * Userrepo- Key is the username and value is the list of repos that the user follows and has contributed to.
+  * Userfollow - Key is the username and value is the list of usernames of the people who user follows.
+  * Weeklytrends - Key is the reponame and value are the watch counts in the past week.
+
+## 4. Front end
+Flask is use for the web app and D3 to visualize results.
+
+## 5. Presentation
+Presentation for [GitHub Graph] (http://githubgraph.com/) can be found here - http://www.slideshare.net/ronaknnatnani/githubgraph
+
+I encourage you to play with [GitHub Graph](http://githubgraph.com/) and see trends you would be interested in.
 
 
 
