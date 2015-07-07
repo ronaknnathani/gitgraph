@@ -35,14 +35,11 @@ An example to collect acttivity for all of January 2015	from [GitHub Archive] (h
 
 ## 2. AWS Clusters 
 [GitHub Graph] (http://githubgraph.com/) is powered by three clusters on AWS-
-* 3 m3.large producers collecting data from GitHub's API and sending these messages to [Kafka] (http://kafka.apache.org/)
-
-![Producers] (/flask/static/img/producers.png)
-
+* 4 m3.large producers collecting data from GitHub's API and sending these messages to [Kafka] (http://kafka.apache.org/)
 * 6 m3.xlarge for [Spark] (https://spark.apache.org/) Cluster
 * 5 m3.large for [HDFS] (http://hadoop.apache.org/docs/r1.2.1/hdfs_design.html), [Kafka] (http://kafka.apache.org/), [Cassndra](http://cassandra.apache.org/), [Zookeeper] (https://zookeeper.apache.org/)
 
-![Batch] (/flask/static/img/clusters.png)
+![Clusters] (/flask/static/img/clusters.png)
 
 ## 3. Data Pipeline
 
