@@ -72,31 +72,61 @@ def graph_post():
   if year=="2015":
     table = "userrepo"
   elif year=="2014":
-    table = "userrepo2014"
+    table = ["userrepo2014_1","userrepo2014_2"]
   elif year=="2013":
     table = "userrepo2013"
   elif year=="2012":
     table = "userrepo2012"
   elif year=="Dec. 2011":
     table = "userrepo2011"
-
+  elif year=="All":
+    table = ["userrepo2011", "userrepo2012", "userrepo2013", "userrepo2014_1","userrepo2014_2", "userrepo"]
+    
   cql = "SELECT following from userfollow WHERE username=%s" # build the query
   try:
     stmt = session.execute(cql, parameters=[username]) # execute the query
     if stmt==[]: # if the user details are not in the database, fetch from API
-      get_graph(username) # get user details
+      ans = get_graph(username) # get user details
+      if not ans:
+        return render_template("graph-noresult.html", response = username)  # in case there is no result
       stmt = session.execute(cql, parameters=[username]) # execute the query after getting details from API
+    
     following_list = stmt[0].following # get the list of people followed by the user
     if following_list==None: # if user doesn't follow anyone, return the corresponding response
       return render_template("nofollowing.html", response=username)
+    
     repojson = []
     for all in following_list: # for all users that the given user follows get the respective repos
-      cql = "SELECT repo from "+ table +" WHERE username=%s"
-      reporow = session.execute(cql, parameters=[all])
-      if reporow==[]:
-        repojson.append({"name": all}) # if there are no repos the there are no children to the node, just people followed by the user
-      else:        
-        repojson.append({"name": all, "children": [{"name":reponame, "size":10000} for reponame in Set(list(reporow[0].repo))]}) # if there are repos that the user follows/contributes to, create the nested json for tree
+      if year=="2014":
+        reporows = []
+        reporow = []
+        for i, x in enumerate(table):
+          reporows.append(session.execute("SELECT repo from "+ table[i] +" WHERE username=%s", parameters=[all]))
+        reporow = [x for y in reporows if y!=[] for x in Set(list(y[0].repo))]
+        if reporow==[]:
+          repojson.append({"name": all}) # if there are no repos the there are no children to the node, just people followed by the user
+        else:        
+          repojson.append({"name": all, "children": [{"name":reponame, "size":10000} for reponame in reporow]}) # if there are repos that the user follows/contributes to, create the nested json for tree
+      
+      elif year=="All":
+        reporows = []
+        reporow = []
+        for i, x in enumerate(table):
+          reporows.append(session.execute("SELECT repo from "+ table[i] +" WHERE username=%s", parameters=[all]))
+        reporow = [x for y in reporows if y!=[] for x in Set(list(y[0].repo))]
+        if reporow==[]:
+          repojson.append({"name": all}) # if there are no repos the there are no children to the node, just people followed by the user
+        else:        
+          repojson.append({"name": all, "children": [{"name":reponame, "size":10000} for reponame in reporow]}) # if there are repos that the user follows/contributes to, create the nested json for tree
+      
+      else:
+        cql = "SELECT repo from "+ table +" WHERE username=%s"
+        reporow = session.execute(cql, parameters=[all])
+        if reporow==[]:
+          repojson.append({"name": all}) # if there are no repos the there are no children to the node, just people followed by the user
+        else:        
+          repojson.append({"name": all, "children": [{"name":reponame, "size":10000} for reponame in Set(list(reporow[0].repo))]}) # if there are repos that the user follows/contributes to, create the nested json for tree  
+    
     jsonresponse = {"name": username, "children": [x for x in repojson]} # final json with parent and children for the tree
     return render_template("testgraphtree.html", response = json.dumps(jsonresponse)) # render the tree
   except:
