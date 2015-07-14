@@ -6,9 +6,9 @@
 1. [Introduction] (README.md#1-introduction)
 2. [AWS Clusters] (README.md#2-aws-clusters)
 3. [Data Pipeline] (README.md#3-data-pipeline)
-4. [API] (READMD.md#4-api)
+4. [API] (README.md#4-api)
 5. [Front End] (README.md#5-front-end)
-6. [Presentation] (README.md#6-front-end)
+6. [Presentation] (README.md#6-presentation)
 
 ## 1. Introduction
 [GitHub Graph](http://githubgraph.com/) is a tool to enable developers to stay updated with the trends on [GitHub](https://github.com/) that they would be interested in. It uses [GitHub Archive] (https://www.githubarchive.org/) and [GitHub API] (https://developer.github.com/v3/users/) as data sources to serve the application. Esentially, it is a big data pipeline focused on answering- "For the users I follow, what are the repositories that those users follow and contribute to".
