@@ -95,7 +95,7 @@ The API has the following endpoints-
 Flask is use for the web app and D3 to visualize results.
 
 ## 6. Presentation
-Presentation for [GitHub Graph] (http://githubgraph.com/) can be found [here](https://docs.google.com/presentation/d/1fl2fXeUn104eVmAt_X-Ad-0s243dlGx7Y1CDKHn2vN8/edit?usp=sharing){:target="_blank"}
+Presentation for [GitHub Graph] (http://githubgraph.com/) can be found [here](https://docs.google.com/presentation/d/1fl2fXeUn104eVmAt_X-Ad-0s243dlGx7Y1CDKHn2vN8/edit?usp=sharing)
 
 I encourage you to play with [GitHub Graph](http://githubgraph.com/) and see trends you would be interested in.
 
