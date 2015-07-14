@@ -5,9 +5,10 @@
 ## Index
 1. [Introduction] (README.md#1-introduction)
 2. [AWS Clusters] (README.md#2-aws-clusters)
-3. [Data Pipeline] (README.md#4 - data-pipeline)
-4. [Front End] (README.md#6 - front-end)
-5. [Presentation] (README.md#6 - front-end)
+3. [Data Pipeline] (README.md#3 - data-pipeline)
+4. [API] (READMD.md#4 - api)
+5. [Front End] (README.md#5 - front-end)
+6. [Presentation] (README.md#6 - front-end)
 
 ## 1. Introduction
 [GitHub Graph](http://githubgraph.com/) is a tool to enable developers to stay updated with the trends on [GitHub](https://github.com/) that they would be interested in. It uses [GitHub Archive] (https://www.githubarchive.org/) and [GitHub API] (https://developer.github.com/v3/users/) as data sources to serve the application. Esentially, it is a big data pipeline focused on answering- "For the users I follow, what are the repositories that those users follow and contribute to".
@@ -25,9 +26,9 @@
 ![Weekly Trending repos] (flask/static/img/publictimeline.png)
 
 An example to collect acttivity for all of January 2015	from [GitHub Archive] (https://www.githubarchive.org/) is:
-
-    $ wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
-
+```
+$ wget http://data.githubarchive.org/2015-01-{01..30}-{0..23}.json.gz
+```
 * [GitHub API] (https://developer.github.com/v3/users/): 
 [GitHub Graph] (http://githubgraph.com/) has 12M+ GitHub usernames with their IDs from [GitHub's API's] (https://developer.github.com/v3/users/) https://api.github.com/users endpoint. Using these  usernames it also collects data regarding who these users are following using https://api.github.com/users/username/following endpoint. There are over 4M such records in the database at present. Moreover, if the queried username is not in the database, records for that username are collected from the API in real time, stored in the database and results are generated.
 
@@ -78,10 +79,22 @@ An example to collect acttivity for all of January 2015	from [GitHub Archive] (h
   * Userfollow - Key is the username and value is the list of usernames of the people who user follows.
   * Weeklytrends - Key is the reponame and value are the watch counts in the past week.
 
-## 4. Front end
+## 4. API
+The API has the following endpoints-
+ * Trending
+```
+ $ http://52.8.127.252:5000/api/trending
+```
+
+ * Graph
+```
+ $ http://52.8.127.252:5000/api/graph/username/year
+```
+
+## 5. Front end
 Flask is use for the web app and D3 to visualize results.
 
-## 5. Presentation
+## 6. Presentation
 Presentation for [GitHub Graph] (http://githubgraph.com/) can be found here - http://www.slideshare.net/ronaknnatnani/githubgraph
 
 I encourage you to play with [GitHub Graph](http://githubgraph.com/) and see trends you would be interested in.
